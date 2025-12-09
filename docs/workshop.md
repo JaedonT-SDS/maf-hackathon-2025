@@ -557,10 +557,10 @@ group_workflow = (
 
 As you can see, you create a group chat workflow with the IssueAnalyzerAgent and the GitHubAgent. The agents are guided by a manager agent that will route the requests to the appropriate agent based on the prompt.
 
-Now, update the Dev UI setup to run the group chat workflow instead of the individual agents:
+Now, update the Dev UI setup to add the group chat workflow instead of the individual agents:
 
 ```python
-serve(entities=[group_workflow], port=8090, auto_open=True, tracing_enabled=True)
+serve(entities=[issue_analyzer_agent, github_agent, group_workflow_agent], port=8090, auto_open=True, tracing_enabled=True)
 ```
 
 Now, run your agent again:
@@ -568,6 +568,10 @@ Now, run your agent again:
 ```bash
 uv run python main.py
 ```
+
+Select the group chat workflow agent in the Dev UI and ask your first question:
+
+![select-menu-devui](./assets/devui_select_menu.png)
 
 You can now interact with the group chat workflow. The manager agent will route your requests to the appropriate agent based on the prompt.
 
@@ -600,7 +604,7 @@ ms_learn_agent = AzureAIAgentClient(**settings).create_agent(
 If you want to test it individually, you can update the Dev UI integration:
 
 ```python
-serve(entities=[ms_learn_agent], port=8090, auto_open=True, tracing_enabled=True)
+serve(entities=[issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent], port=8090, auto_open=True, tracing_enabled=True)
 ```
 
 As you can see, you dynamically load the MCP Learn tool, without authentication for this one, as it's totally open, and create the agent using this tool.
@@ -628,7 +632,7 @@ workflow = (
 Update the Dev UI setup to run the sequential workflow instead of the group chat workflow:
 
 ```python
-serve(entities=[workflow], port=8090, auto_open=True, tracing_enabled=True)
+serve(entities=[issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent, workflow], port=8090, auto_open=True, tracing_enabled=True)
 ```
 
 Finally, run your agent again:

@@ -76,7 +76,7 @@ def main():
         .build()
     )
 
-    serve(entities=[group_workflow], port=8090, auto_open=True, tracing_enabled=True)
+    serve(entities=[issue_analyzer_agent, github_agent, group_workflow], port=8090, auto_open=True, tracing_enabled=True)
 
 
 if __name__ == "__main__":

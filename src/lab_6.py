@@ -99,7 +99,7 @@ def main():
         .build()
     )
 
-    serve(entities=[workflow], port=8090, auto_open=True, tracing_enabled=True)
+    serve(entities=[issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent, workflow], port=8090, auto_open=True, tracing_enabled=True)
 
 
 if __name__ == "__main__":
