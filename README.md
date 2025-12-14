@@ -95,7 +95,9 @@ cd infra && terraform init
 
 If you see an error like `chmod ... operation not permitted` while Terraform is downloading providers, your repo is likely on a Windows-backed mount (common with some Dev Container / WSL / Codespaces setups). That filesystem doesn't support Unix permission changes, but Terraform tries to `chmod` provider binaries and temporary lock files.
 
-This repo includes a pre-generated provider lock file ([infra/.terraform.lock.hcl](infra/.terraform.lock.hcl)). To make Terraform work reliably, store Terraform's internal working data (downloaded providers, plugin cache, etc.) on a Linux filesystem path (e.g., `/vscode`):
+Most people can ignore this section and just run `terraform init` normally.
+
+If you hit the `chmod` error, run Terraform with its internal working data stored on a Linux filesystem path inside the container (in Dev Containers, `/vscode` is typically an `ext4` mount):
 
 ```bash
 cd infra

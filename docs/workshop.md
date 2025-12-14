@@ -169,8 +169,9 @@ az account show
 # Select your Azure subscription
 az account set --subscription <subscription-id>
 
+# Set the subscription ID as an environment variable
+export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 # Register the following Azure providers if they are not already
-
 # Azure Cognitive Services
 az provider register --namespace 'Microsoft.CognitiveServices'
 ```
@@ -183,7 +184,7 @@ First, you need to initialize the terraform infrastructure by running the follow
 
 > If you're using the **local Devcontainer** and Terraform fails during `terraform init` with `chmod ... operation not permitted`, your repository is likely mounted from a host filesystem that doesn't support Linux permission changes.
 >
-> This repo includes a pre-generated lock file (`infra/.terraform.lock.hcl`). To make `terraform init` work reliably, store Terraform's internal working data on a Linux filesystem path inside the container (for example `/vscode`):
+> To make `terraform init` work reliably, store Terraform's internal working data on a Linux filesystem path inside the container (for example `/vscode`):
 >
 > ```bash
 > mkdir -p /vscode/tfdata/plugin-cache
