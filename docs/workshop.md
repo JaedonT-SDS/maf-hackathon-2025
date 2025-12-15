@@ -30,9 +30,47 @@ Welcome to this hands-on lab! In this workshop, you will learn how to build agen
 
 In this hands-on lab, you will build a **Helpdesk Ops Assistant** powered by AI agents. This multi-agent system will handle internal support tickets by leveraging enterprise best practices (RAG), MCP servers, and native tools to provide intelligent assistance.
 
+<details>
+<summary><strong>Context (optional): Why LLMs (GenAI agents) are relevant here</strong></summary>
+
+Helpdesk requests are mostly **unstructured text** (short descriptions, partial context, logs, mixed intents). LLM-based agents work well for this because they can:
+
+- Extract structure from messy inputs (title, summary, root-cause hints) without a dedicated NLP pipeline.
+- Combine reasoning with **tools** (deterministic calculations) and **RAG** (company guidelines, docs) instead of relying on memorized knowledge.
+- Adapt quickly as policies and documentation change (update the knowledge base and prompts, not a trained model).
+
+Classic NLP/ML can be a great choice when you have stable categories and lots of labeled data (for example, high-volume ticket routing). For this workshop, the goal is an end-to-end assistant that can understand, retrieve context, and take actions rapidly with minimal setup.
+
+</details>
+
 ### The Multi-Agent Architecture
 
 You will create a coordinated system of three specialized agents working together:
+
+```text
+                     +----------------------+
+User / Prompt  ----> |  Agent Orchestration |
+                     | (Workflow / Group)   |
+                     +----------+-----------+
+                                |
+                +---------------+----------------+
+                |                                |
+                v                                v
+     +---------------------+          +---------------------+
+     |  IssueAnalyzerAgent |          |      DocsAgent      |
+     | (Pydantic outputs + |          | (MCP: mslearn)      |
+     |  native tools)      |          +----------+----------+
+     +----------+----------+                     |
+                |                                |
+                +---------------+----------------+
+                                |
+                                v
+                     +----------------------+
+                     |      GitHubAgent     |
+                     |   (MCP: GitHub)      |
+                     | create/update issues |
+                     +----------------------+
+```
 
 **IssueAnalyzerAgent**  
 Analyzes support tickets using structured data contracts (Pydantic models), determines issue complexity, and provides detailed analysis of bugs and feature requests. This agent uses native tools to calculate accurate time estimates based on complexity levels.
