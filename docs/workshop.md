@@ -74,15 +74,15 @@ User / Prompt
         |
         v
     +---------------------+            +----------------------+
-    |      DocsAgent      | --MCP-->   |   Microsoft Learn     |
+    |      DocsAgent      | --MCP-->   |   Microsoft Learn    |
     |    (MCP: mslearn)   |            +----------------------+
     +----------+----------+
                          |
                          | Relevant docs/context
                          v
     Step 2 (Group Chat): Execution managed by an Orchestrator
-        |
-        v
+                         |
+                         v
                      +-----------------------------+
                      |      Orchestrator Agent     |
                      |   (Group Chat / Manager)    |
@@ -97,8 +97,8 @@ User / Prompt
         +----------+----------+     |      issues         |
                    |                +----------+----------+
                    | native tools              |
-                   v                          | MCP calls
-        +---------------------+               v
+                   v                           | MCP calls
+        +---------------------+                v
         |  Local tool calls   |           +-----------+
         | (time estimates...) |           |   GitHub  |
         +---------------------+           +-----------+
@@ -1025,4 +1025,5 @@ Congratulations! You have successfully completed this hands-on lab on building a
 - [Announcement Blog Agent framework](https://aka.ms/AgentFramework/PuPr)
 - [Watch Sessions On-Demand Agent framework](https://aka.ms/AgentFramework/AIShow)
 - [MCP for Beginners (GitHub)](https://github.com/microsoft/mcp-for-beginners/)
+
 - [MCP overview video (YouTube)](https://www.youtube.com/watch?v=VfZlglOWWZw&t=3s)
