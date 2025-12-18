@@ -1,25 +1,25 @@
 import os
+import logging
+from dotenv import load_dotenv
+
 from agent_framework import GroupChatBuilder, HostedMCPTool, HostedVectorStoreContent, SequentialBuilder, ToolMode, HostedFileSearchTool
 from agent_framework.azure import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
-from dotenv import load_dotenv
 from agent_framework.devui import serve
 from models.issue_analyzer import IssueAnalyzer
 from tools.time_per_issue_tools import TimePerIssueTools
 from agent_framework.observability import setup_observability
-import logging
 
 load_dotenv()
 
-def main():
-    # setup_observability()
-    logging.basicConfig(level=logging.INFO, format="%(message)s")
-    
+def create_workflow_instance():
+    """Create and return workflow instance for reuse in API"""
     settings = {
         "project_endpoint": os.environ["AZURE_AI_PROJECT_ENDPOINT"],
         "model_deployment_name": os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
         "credential": AzureCliCredential(),
     }
+    
     timePerIssueTools = TimePerIssueTools()
     issue_analyzer_agent = AzureAIAgentClient(**settings).create_agent(
         instructions="""
@@ -35,7 +35,6 @@ def main():
             Your response should contain only values obtained from the tool calls.
         """,
         name="IssueAnalyzerAgent",
-        # response_format=IssueAnalyzer,
         tool_choice=ToolMode.AUTO,
         tools=[
             timePerIssueTools.calculate_time_based_on_complexity,
@@ -67,13 +66,11 @@ def main():
                 url="https://api.githubcopilot.com/mcp",
                 description="A GitHub MCP server for GitHub interactions",
                 approval_mode="never_require",
-                # PAT token, restricting which repos the MCP Server
                 headers={
                     "Authorization": f"Bearer {os.environ['GITHUB_MCP_PAT']}",
                 },
             )
         ]
-
     )
 
     ms_learn_agent = AzureAIAgentClient(**settings).create_agent(
@@ -119,14 +116,23 @@ def main():
     group_workflow_agent = group_workflow.as_agent(
         name="IssueCreationAgentGroup"
     )
+    
     workflow = (
         SequentialBuilder()
         .participants([ms_learn_agent, group_workflow_agent])
         .build()
     )
+    
+    return workflow, issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent
 
-    serve(entities=[issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent, workflow], port=8090, auto_open=True, tracing_enabled=True)
-
+def main():
+    # setup_observability()
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    
+    workflow, issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent = create_workflow_instance()
+    
+    serve(entities=[issue_analyzer_agent, github_agent, ms_learn_agent, group_workflow_agent, workflow], 
+          port=8090, auto_open=True, tracing_enabled=True)
 
 if __name__ == "__main__":
     main()
